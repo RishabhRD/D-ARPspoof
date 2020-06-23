@@ -52,20 +52,20 @@ import java.util.List;
 
 import net.floodlightcontroller.dhcpserver.*;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
-public class ArpAuthenticator implements IFloodlightModule, IOFMessageListener ,IOFSwitchListener,ILinkDiscoveryListener{
+public class HostCertification implements IFloodlightModule, IOFMessageListener ,IOFSwitchListener,ILinkDiscoveryListener{
 	protected IOFSwitchService switchService;
-	protected static Logger log = LoggerFactory.getLogger(ArpAuthenticator.class);
+	protected static Logger log = LoggerFactory.getLogger(HostCertification.class);
 	protected IRestApiService restApiService;
 	protected IFloodlightProviderService floodlightProviderService;
 	protected PortIPTable portIPMap;
 	protected MacPortTable macPortTable;
 	protected ARPDHCP dhcp;
-	protected ArpForwarding arpForwarding;
+	protected DARPSpoof arpForwarding;
 
 
 	@Override
 	public String getName() {
-		return "ArpAuthenticator";
+		return "HostCertification";
 	}
 
 	@Override
@@ -194,7 +194,6 @@ public class ArpAuthenticator implements IFloodlightModule, IOFMessageListener ,
 	@Override
 	public Collection<Class<? extends IFloodlightService>> getModuleServices() {
 		Collection<Class<? extends IFloodlightService>> l  = new ArrayList<>();
-		//l.add(IArpAuthenticatorService.class);
 		return l;
 	}
 
@@ -202,7 +201,6 @@ public class ArpAuthenticator implements IFloodlightModule, IOFMessageListener ,
 	@Override
 	public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
 		Map<Class<? extends IFloodlightService>,IFloodlightService> m  = new HashMap<>();
-		//m.put(IArpAuthenticatorService.class,this);
 		return m;
 	}
 
@@ -223,14 +221,13 @@ public class ArpAuthenticator implements IFloodlightModule, IOFMessageListener ,
 		portIPMap = new PortIPTable();
 		macPortTable = new MacPortTable();
 		dhcp = new ARPDHCP(context);
-		arpForwarding = new ArpForwarding(context,switchService);
+		arpForwarding = new DARPSpoof(context,switchService);
 	}
 
 	@Override
 	public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
 		floodlightProviderService.addOFMessageListener(OFType.PACKET_IN, this);
 		floodlightProviderService.addOFMessageListener(OFType.PACKET_OUT, this);
-		//restApiService.addRestletRoutable(new ArpAuthenticatorWebRoutable());
 		switchService.addOFSwitchListener(this);
 	}
 

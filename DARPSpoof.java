@@ -55,7 +55,7 @@ import net.floodlightcontroller.routing.Path;
 import net.floodlightcontroller.util.OFMessageDamper;
 import net.floodlightcontroller.util.OFMessageUtils;
 
-public class ArpForwarding implements IRoutingDecisionChangedListener{
+public class DARPSpoof implements IRoutingDecisionChangedListener{
 	protected int FLOWMOD_DEFAULT_PRIORITY = 30;
 	protected int FLOWMOD_DEFAULT_HARD_TIMEOUT = 0;
 	protected int FLOWMOD_DEFAULT_IDLE_TIMEOUT = 10;
@@ -73,7 +73,7 @@ public class ArpForwarding implements IRoutingDecisionChangedListener{
 	private static final long FLOWSET_MAX = (long) (Math.pow(2, FLOWSET_BITS) - 1);
 	public static int ARP_APP_ID = 7;
 	static {
-		AppCookie.registerApp(ARP_APP_ID, "ArpAuthenticator");
+		AppCookie.registerApp(ARP_APP_ID, "HostCertification");
 	}
 	protected static final U64 ARP_FORWARDING_COOKIE = AppCookie.makeCookie(ARP_APP_ID, 0);
 	protected static class FlowSetIdRegistry{
@@ -175,11 +175,11 @@ public class ArpForwarding implements IRoutingDecisionChangedListener{
 	private static int OFMESSAGE_DAMPER_TIMEOUT = 250; // ms
     
 	protected FlowSetIdRegistry flowRegistry;
-	public ArpForwarding(FloodlightModuleContext context,IOFSwitchService switchService){
+	public DARPSpoof(FloodlightModuleContext context,IOFSwitchService switchService){
 		routingService = context.getServiceImpl(IRoutingService.class);
 		routingService.addRoutingDecisionChangedListener(this);
 		this.switchService = switchService;
-		log = LoggerFactory.getLogger(ArpAuthenticator.class);
+		log = LoggerFactory.getLogger(HostCertification.class);
 		messageDamper = new OFMessageDamper(OFMESSAGE_DAMPER_CAPACITY,EnumSet.of(OFType.FLOW_MOD),OFMESSAGE_DAMPER_TIMEOUT);
 		flowRegistry = FlowSetIdRegistry.getInstance();
 	}
